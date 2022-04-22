@@ -1,0 +1,382 @@
+<div class="container">
+  <table class="table table-hover" style="width: 100%">
+    <th></th>
+  </table>
+  <div class="filter-col3 p-r-15 p-b-27">
+    <div class="mtext-102 cl2 p-b-15">
+    </div>
+    <ul>
+      <li class="p-b-6">
+									<span>
+										Store Name: {{store?.name}}
+									</span>
+      </li>
+      <li class="p-b-6">
+									<span>
+										Store Owner: {{store?.storeOwner?.fullName}}
+									</span>
+      </li>
+      <li class="p-b-6">
+									<span>
+										Category: {{store?.categoriesList?.name}}
+									</span>
+      </li>
+    </ul>
+  </div>
+
+  <button type="button" class="btn btn-primary" style="margin-right: 10px" data-bs-toggle="modal"
+          data-bs-target="#exampleModal">
+    Add Product
+  </button>
+  <button type="button" class="btn btn-primary" style="margin-right: 10px" data-bs-toggle="modal"
+          data-bs-target="#modalCategory">
+    Category
+  </button>
+  <button type="button" class="btn btn-primary" style="margin-right: 10px" data-bs-toggle="modal"
+          data-bs-target="#modalRevenue">
+    Revenue
+  </button>
+  <button type="button" class="btn btn-primary" style="margin-right: 10px" data-bs-toggle="modal"
+          data-bs-target="#modalVoucher">
+    Voucher
+  </button>
+  <button type="button" class="btn btn-primary" style="margin-right: 10px" data-bs-toggle="modal" data-bs-target="#modalStore">
+    Update Infor Store
+  </button>
+
+  <div class="panel-search w-full p-t-10 p-b-15">
+    <div class="bor8 dis-flex p-l-15">
+      <i class="zmdi zmdi-search size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04"></i>
+      <input [(ngModel)]="message" (input)="search()" class="mtext-107 cl2 size-114 plh2 p-r-15" type="text"
+             name="search-product" placeholder="Search by name">
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Inventory No.</th>
+      <th>Sold No.</th>
+      <th>Description</th>
+      <th>Image</th>
+      <th colspan="2">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let p of products; index as i">
+      <td> {{i + 1}} </td>
+      <td style="max-width: 100px"><span class="description_product">{{p.name}}</span></td>
+      <td>{{p.price}}</td>
+      <td>{{p.inventoryQuantity}}</td>
+      <td>{{p.soldQuantity}}</td>
+      <td style="max-width: 250px"><span class="description_product">{{p.description}}</span></td>
+      <td style="width: 50px; height: 40px"><img src="{{p.coverImage}}" alt="Error" style="width: auto; height: 40px"></td>
+      <td>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                (click)="editProduct(p.id)">
+          <i class="fa-regular fa-circle-check" style="margin-right: 3px"></i>
+          Edit
+        </button>
+        |
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                (click)="getProductById(p.id)">
+          <i class="fa-solid fa-ban" style="margin-right: 3px"></i>
+          Delete
+        </button>
+      </td>
+      <td>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><span id="modal__header">Create New Product</span></h2>
+        <button (click)="resetForm()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="productForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input class="form-control" id="name" formControlName="name" type="text">
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price:</label>
+            <input class="form-control" id="price" formControlName="price" type="number">
+          </div>
+          <div class="mb-3">
+            <label for="inventoryQuantity" class="form-label">Inventory Quantity:</label>
+            <input class="form-control" id="inventoryQuantity" formControlName="inventoryQuantity" type="number">
+          </div>
+          <div class="mb-3">
+            <label for="description-p" class="form-label">Description:</label>
+            <textarea class="form-control" id="description-p" formControlName="description"></textarea>
+          </div>
+          <input
+            type="file" #inputFile
+            class="text-nowrap text-truncate"
+            (change)="selectFile($event)"
+          />
+          <div *ngIf="currentFileUpload" class="progress mt-2">
+            <div
+              class="progress-bar progress-bar-info"
+              role="progressbar"
+              attr.aria-valuenow="{{ percentage }}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [ngStyle]="{ width: percentage + '%' }"
+            >
+              {{ percentage }}%
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="submit" data-bs-dismiss="modal" (click)="submit()">Save</button>
+<!--            <button  type="submit" class="btn btn-primary" id="submit" data-bs-dismiss="modal" (click)="submit()">Save</button>-->
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal2 -->
+<div class="modal fade" id="modalCategory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><b>Category</b></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-primary" (click)="showFormCategory()">Create New Category</button>
+        <form [formGroup]="categoryForm" id="showFormCategory" style="display: none">
+          <div class="mb-3">
+            <label for="nameCategory" class="form-label">Name:</label>
+            <input class="form-control" id="nameCategory" formControlName="name" type="text">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" (click)="createCategory()">Save
+            </button>
+          </div>
+        </form>
+
+        <h3>List Category</h3>
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Change category</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let c of categories; index as i">
+            <td> {{i + 1}} </td>
+            <td>{{c.name}}</td>
+            <td>
+              <button class="btn btn-primary" (click)="saveCategory(c.id)" data-bs-dismiss="modal">Change</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ModalDelete -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><b>Delete Product</b></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4>Are you sure you want to delete this product ?</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteProduct(productDelete.id)">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Voucher -->
+<div class="modal fade" id="modalVoucher" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><b>Voucher</b></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-primary" (click)="showFormVoucher()">Create New Voucher</button>
+        <form [formGroup]="voucherForm" id="showFormVoucher" style="display: none">
+          <div class="mb-3">
+            <label for="nameVoucher" class="form-label">Name:</label>
+            <input class="form-control" id="nameVoucher" formControlName="name" type="text">
+          </div>
+          <div class="mb-3">
+            <label for="discount" class="form-label">Discount(%):</label>
+            <input class="form-control" id="discount" formControlName="discount" type="number">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" (click)="saveVoucher()">Save</button>
+          </div>
+        </form>
+
+        <h3>List Voucher</h3>
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Discount</th>
+            <th>Delete</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let v of vouchers; index as i">
+            <td> {{i + 1}} </td>
+            <td>{{v.name}}</td>
+            <td>{{v.discount}}</td>
+            <td>
+              <button class="btn btn-danger" (click)="deleteVoucher(v.id)">Delete</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Revenue -->
+<div class="modal fade" id="modalRevenue" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><b>Revenue</b></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h3>Total revenue: {{totalRevenue}} $</h3>
+
+        <button class="btn btn-primary" (click)="showFormBill()">Find bill by time</button>
+        <form [formGroup]="revenueForm" id="showFormBill" style="display: none;">
+          <div class="mb-3">
+            <label for="startRevenue" class="form-label">Start time:</label>
+            <input class="form-control" id="startRevenue" formControlName="start" type="date">
+          </div>
+          <div class="mb-3">
+            <label for="endRevenue" class="form-label">End time:</label>
+            <input class="form-control" id="endRevenue" formControlName="end" type="date">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" (click)="getRevenue()">Get</button>
+          </div>
+        </form>
+
+        <h3>List Revenue</h3>
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Date buy</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Voucher</th>
+            <th>Total revenue</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let b of bills; index as i">
+            <td> {{i + 1}} </td>
+            <td>{{b.dateCreate}}</td>
+            <td>{{b.customer?.fullName}}</td>
+            <td>{{b.product?.name}}</td>
+            <td>{{b.quantity}}</td>
+            <td *ngIf="b.voucher != null">{{b.voucher?.name}}</td>
+            <td *ngIf="b.voucher == null">0</td>
+            <td>{{b.totalPrice}}</td>
+          </tr>
+          <tr *ngIf="revenue != 0">
+            <th colspan="6">Revenue</th>
+            <th colspan="1">{{revenue}}</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal store -->
+<div class="modal fade" id="modalStore" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" ><b>Update Information Store</b></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="storeForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name Store:</label>
+            <input class="form-control" id="nameStore" formControlName="name" type="text">
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input class="form-control" id="description" formControlName="description" type="text">
+          </div>
+          <input
+            type="file"
+            class="text-nowrap text-truncate"
+            (change)="selectFile($event)"
+          />
+          <div *ngIf="currentFileUpload" class="progress mt-2">
+            <div
+              class="progress-bar progress-bar-info"
+              role="progressbar"
+              attr.aria-valuenow="{{ percentage }}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [ngStyle]="{ width: percentage + '%' }"
+            >
+              {{ percentage }}%
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!--            <button *ngIf="percentage != 100" disabled type="submit" class="btn btn-primary" id="submit" (click)="submit()">Save</button>-->
+            <button  type="submit" class="btn btn-primary"  data-bs-dismiss="modal" (click)="submitStore()">Save</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
